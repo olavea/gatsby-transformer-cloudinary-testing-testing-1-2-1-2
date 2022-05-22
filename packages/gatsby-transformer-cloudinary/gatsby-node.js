@@ -234,7 +234,11 @@ exports.onCreateNode = async ({
   });
 
   // Create nodes for files to be uploaded to cloudinary
-  if (pluginOptions.apiKey && pluginOptions.apiSecret && pluginOptions.cloudName ){
+  if (
+    pluginOptions.apiKey &&
+    pluginOptions.apiSecret &&
+    pluginOptions.cloudName
+  ) {
     await createAssetNodeFromFile({
       node,
       actions,
@@ -244,6 +248,9 @@ exports.onCreateNode = async ({
     });
   }
 };
+// The Old Way
+// onPreInit is setting 🌐 global state
+// so that other functions can access that global state. Which is The Old Way. And used here 😉
 
 exports.onPreInit = ({ reporter }, pluginOptions) => {
   setPluginOptions({ pluginOptions, reporter });
