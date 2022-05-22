@@ -252,6 +252,37 @@ exports.onCreateNode = async ({
 // onPreInit is setting 🌐 global state
 // so that other functions can access that global state. Which is The Old Way. And used here 😉
 
+let coreSupportsOnPluginInit = 'unstable' | 'stable' | undefined;
+
+try {
+  const { isGatsbyNodeLifeCycleSupported } = require(`gatsby-plugin-utils`);
+  if (isGatsbyNodeLifeCycleSupported(`onPluginInit`)) {
+    coreSupportsOnPluginInit = 'stable';
+  } else if (isGatsbyNodeLifeCycleSupported(`unstable_onPluginInit`)) {
+    coreSupportsOnPluginInit = 'unstable';
+  }
+} catch (error) {
+  console.error(
+    `Could not check if Gatsby supports onPluginInit lifecycle 🚴‍♀️  `,
+  );
+}
+
+let globalPluginOptions = {};
+
+const initializeGlobalState = (_, pluginOptions) => {
+  globalPluginOptions = pluginOptions;
+};
+
+if (coreSupportsOnPluginInit === 'stable') {
+  exports.onPluginInit = initializeGlobalState;
+} else if (coreSupportsOnPluginInit === 'unstable') {
+  exports.unstable_onPluginInit = initializeGlobalState;
+} else {
+  exports.onPreBootstrap = initializeGlobalState;
+}
+
+// function in /packages/gatsby-transformer-cloudinary/options.js ?
+
 exports.onPreInit = ({ reporter }, pluginOptions) => {
   setPluginOptions({ pluginOptions, reporter });
 };
