@@ -252,6 +252,7 @@ exports.onCreateNode = async ({
 // onPreInit is setting 🌐 global state
 // so that other functions can access that global state. Which is The Old Way. And used here 😉
 
+// Is this let just to explain in the docs? And not part of our actual code?
 let coreSupportsOnPluginInit = 'unstable' | 'stable' | undefined;
 
 try {
@@ -267,9 +268,12 @@ try {
   );
 }
 
+// Is this let just to explain in the docs? And not part of our actual code?
 let globalPluginOptions = {};
 
 const initializeGlobalState = (_, pluginOptions) => {
+  setPluginOptions({ pluginOptions, reporter });
+
   globalPluginOptions = pluginOptions;
 };
 
@@ -282,7 +286,3 @@ if (coreSupportsOnPluginInit === 'stable') {
 }
 
 // function in /packages/gatsby-transformer-cloudinary/options.js ?
-
-exports.onPreInit = ({ reporter }, pluginOptions) => {
-  setPluginOptions({ pluginOptions, reporter });
-};
