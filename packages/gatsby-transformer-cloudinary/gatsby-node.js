@@ -253,7 +253,7 @@ exports.onCreateNode = async ({
 // so that other functions can access that global state. Which is The Old Way. And used here 😉
 
 // Is this let just to explain in the docs? And not part of our actual code?
-let coreSupportsOnPluginInit = 'unstable' | 'stable' | undefined;
+// let coreSupportsOnPluginInit = 'unstable' | 'stable' | undefined;
 
 try {
   const { isGatsbyNodeLifeCycleSupported } = require(`gatsby-plugin-utils`);
@@ -269,7 +269,7 @@ try {
 }
 
 // Is this let just to explain in the docs? And not part of our actual code?
-let globalPluginOptions = {};
+// let globalPluginOptions = {};
 
 const initializeGlobalState = (_, pluginOptions) => {
   setPluginOptions({ pluginOptions, reporter });
