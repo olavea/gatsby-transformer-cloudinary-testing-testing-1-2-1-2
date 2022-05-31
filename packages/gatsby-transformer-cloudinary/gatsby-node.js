@@ -24,7 +24,7 @@ exports.onPreExtractQueries = async ({ store, getNodesByType }) => {
   if (getNodesByType(`CloudinaryAsset`).length == 0) {
     return;
   }
-
+  // We "have" does that mean we use CloudinaryAsset nodes that are created outside of the data layer? No. Not inside cloudinary.com?
   // We have CloudinaryAsset nodes so let’s add our fragments to .cache/fragments.
   await fs.copy(
     require.resolve(`./fragments.js`),
@@ -248,12 +248,8 @@ exports.onCreateNode = async ({
     });
   }
 };
-// The Old Way
-// onPreInit is setting 🌐 global state
-// so that other functions can access that global state. Which is The Old Way. And used here 😉
 
-// Is this let just to explain in the docs? And not part of our actual code?
-// let coreSupportsOnPluginInit = 'unstable' | 'stable' | undefined;
+let coreSupportsOnPluginInit = undefined;
 
 try {
   const { isGatsbyNodeLifeCycleSupported } = require(`gatsby-plugin-utils`);
@@ -268,9 +264,6 @@ try {
   );
 }
 
-// Is this let just to explain in the docs? And not part of our actual code?
-// let globalPluginOptions = {};
-
 const initializeGlobalState = (_, pluginOptions) => {
   setPluginOptions({ pluginOptions, reporter });
 
@@ -284,5 +277,3 @@ if (coreSupportsOnPluginInit === 'stable') {
 } else {
   exports.onPreBootstrap = initializeGlobalState;
 }
-
-// function in /packages/gatsby-transformer-cloudinary/options.js ?
