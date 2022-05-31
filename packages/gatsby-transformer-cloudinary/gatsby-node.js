@@ -24,7 +24,7 @@ exports.onPreExtractQueries = async ({ store, getNodesByType }) => {
   if (getNodesByType(`CloudinaryAsset`).length == 0) {
     return;
   }
-
+  // We "have" does that mean we use CloudinaryAsset nodes that are created outside of the data layer? No. Not inside cloudinary.com?
   // We have CloudinaryAsset nodes so let’s add our fragments to .cache/fragments.
   await fs.copy(
     require.resolve(`./fragments.js`),
@@ -234,7 +234,11 @@ exports.onCreateNode = async ({
   });
 
   // Create nodes for files to be uploaded to cloudinary
-  if (pluginOptions.apiKey && pluginOptions.apiSecret && pluginOptions.cloudName ){
+  if (
+    pluginOptions.apiKey &&
+    pluginOptions.apiSecret &&
+    pluginOptions.cloudName
+  ) {
     await createAssetNodeFromFile({
       node,
       actions,
@@ -245,6 +249,31 @@ exports.onCreateNode = async ({
   }
 };
 
-exports.onPreInit = ({ reporter }, pluginOptions) => {
+let coreSupportsOnPluginInit = undefined;
+
+try {
+  const { isGatsbyNodeLifeCycleSupported } = require(`gatsby-plugin-utils`);
+  if (isGatsbyNodeLifeCycleSupported(`onPluginInit`)) {
+    coreSupportsOnPluginInit = 'stable';
+  } else if (isGatsbyNodeLifeCycleSupported(`unstable_onPluginInit`)) {
+    coreSupportsOnPluginInit = 'unstable';
+  }
+} catch (error) {
+  console.error(
+    `Could not check if Gatsby supports onPluginInit lifecycle 🚴‍♀️  `,
+  );
+}
+
+const initializeGlobalState = (_, pluginOptions) => {
   setPluginOptions({ pluginOptions, reporter });
+
+  globalPluginOptions = pluginOptions;
 };
+
+if (coreSupportsOnPluginInit === 'stable') {
+  exports.onPluginInit = initializeGlobalState;
+} else if (coreSupportsOnPluginInit === 'unstable') {
+  exports.unstable_onPluginInit = initializeGlobalState;
+} else {
+  exports.onPreBootstrap = initializeGlobalState;
+}
