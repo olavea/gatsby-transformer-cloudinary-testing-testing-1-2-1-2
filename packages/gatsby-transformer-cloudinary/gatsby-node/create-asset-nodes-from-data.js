@@ -118,6 +118,20 @@ function createCloudinaryAssetNode({
   createNode(imageNode, { name: 'gatsby-transformer-cloudinary' });
 
   // Tell Gatsby to add `${relationshipName}` to the parent node.
-  const relationshipKey = `${assetDataPath || relationshipName}___NODE`;
-  set(parentNode, relationshipKey, imageNode.id);
+  const relationshipKey = `${assetDataPath || relationshipName}`;
+
+  // Am I adding it to the parent node now?
+  // Question 7: How do I see in GraphiQL if this works?
+  // Answer 7: Is this proof? See Screenshot 6 in github issue #11
+  // in The New Gatsby Way createNodeField
+
+  createNodeField({
+    parentNode,
+    name: relationshipKey,
+    value: imageNode.id,
+  });
+
+  // The Old Way to tell Gatsby to add `${relationshipName}` to the parent node.
+  //  const relationshipKey = `${assetDataPath || relationshipName}___NODE`;
+  //  set(parentNode, relationshipKey, imageNode.id);
 }
